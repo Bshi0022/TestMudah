@@ -24,7 +24,7 @@
 </head>
 <body>
     <h1>Table 1</h1>
-    <table>
+    <table id="table1">
         <thead>
             <tr>
                 <th>Index #</th>
@@ -32,22 +32,12 @@
             </tr>
         </thead>
         <tbody>
-            <!-- Add Table 1 data rows here -->
-            <tr><td>A1</td><td>41</td></tr>
-            <tr><td>A2</td><td>18</td></tr>
-            <tr><td>A3</td><td>21</td></tr>
-            <tr><td>A4</td><td>63</td></tr>
-            <tr><td>A5</td><td>2</td></tr>
-            <tr><td>A7</td><td>15</td></tr>
-            <tr><td>A12</td><td>9</td></tr>
-            <tr><td>A13</td><td>30</td></tr>
-            <tr><td>A15</td><td>240</td></tr>
-            <tr><td>A20</td><td>28</td></tr>
+            <!-- Table 1 data will be populated here -->
         </tbody>
     </table>
 
     <h1>Table 2</h1>
-    <table>
+    <table id="table2">
         <thead>
             <tr>
                 <th>Category</th>
@@ -55,10 +45,42 @@
             </tr>
         </thead>
         <tbody>
-            <tr><td>Alpha</td><td>30</td></tr>
-            <tr><td>Beta</td><td>16</td></tr>
-            <tr><td>Charlie</td><td>270</td></tr>
+            <tr><td>Alpha</td><td id="alpha"></td></tr>
+            <tr><td>Beta</td><td id="beta"></td></tr>
+            <tr><td>Charlie</td><td id="charlie"></td></tr>
         </tbody>
     </table>
+
+    <script>
+        // Load the CSV file
+        fetch('Table_Input.csv')
+            .then(response => response.text())
+            .then(data => {
+                const rows = data.split('\n').slice(1); // Skip header row
+                const values = {};
+
+                rows.forEach(row => {
+                    const columns = row.split(',');
+                    values[columns[0]] = parseFloat(columns[1]); // Store values by index
+                });
+
+                // Populate Table 1
+                const table1Body = document.querySelector('#table1 tbody');
+                for (const key in values) {
+                    const newRow = table1Body.insertRow();
+                    newRow.innerHTML = `<td>${key}</td><td>${values[key]}</td>`;
+                }
+
+                // Calculate and populate Table 2
+                const alpha = values['A5'] + values['A20'];
+                const beta = values['A15'] / values['A7'];
+                const charlie = values['A13'] * values['A12'];
+
+                document.getElementById('alpha').innerText = alpha;
+                document.getElementById('beta').innerText = beta;
+                document.getElementById('charlie').innerText = charlie;
+            })
+            .catch(error => console.error('Error loading the CSV file:', error));
+    </script>
 </body>
 </html>
